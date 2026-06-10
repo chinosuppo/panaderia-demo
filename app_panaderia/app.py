@@ -78,14 +78,6 @@ st.markdown(f"""
 
   .stApp {{ background-color: {BG}; }}
 
-  /* ── Padding del contenido principal — más compacto en mobile ── */
-  .block-container {{
-    padding-top: 1.5rem !important;
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-    max-width: 100% !important;
-  }}
-
   /* ── Sidebar ── */
   [data-testid="stSidebar"] {{
     background-color: {BG_SIDEBAR};
@@ -208,106 +200,11 @@ st.markdown(f"""
     pointer-events: none !important;
   }}
 
-  /* ── Botón custom de toggle sidebar ─────────────────────────────────────── */
-  div[data-testid="stButton"][id*="toggle_sidebar"] button,
-  button[key="toggle_sidebar"] {{
-    background: {BG_CARD} !important;
-    border: 1px solid {BORDER} !important;
-    border-radius: 8px !important;
-    color: {TEXT_SUB} !important;
-    font-size: 1rem !important;
-    font-weight: 500 !important;
-    padding: 6px 10px !important;
-    min-width: 36px !important;
-    height: 36px !important;
-    line-height: 1 !important;
-    cursor: pointer !important;
-  }}
+
 
   /* expander eliminado — se usa botón nativo sin íconos problemáticos */
 
-  /* ══════════════════════════════════════════════
-     RESPONSIVE — Mobile (≤ 768px)
-     Streamlit mobile: el sidebar se convierte en
-     overlay, el contenido ocupa 100% del ancho.
-  ══════════════════════════════════════════════ */
-  @media (max-width: 768px) {{
 
-    /* Padding mínimo en mobile */
-    .block-container {{
-      padding-left: 0.6rem !important;
-      padding-right: 0.6rem !important;
-      padding-top: 1rem !important;
-    }}
-
-    /* Título más chico */
-    h1 {{
-      font-size: 1.15rem !important;
-    }}
-    h2, h3 {{
-      font-size: 0.88rem !important;
-    }}
-
-    /* Métricas: valor más compacto */
-    [data-testid="stMetricValue"] {{
-      font-size: 1.15rem !important;
-    }}
-    [data-testid="stMetricLabel"] {{
-      font-size: 0.62rem !important;
-    }}
-    [data-testid="stMetric"] {{
-      padding: 10px 12px !important;
-    }}
-
-    /* Banner de insight: texto más chico */
-    .insight-banner {{
-      font-size: 0.78rem !important;
-      padding: 8px 12px !important;
-    }}
-
-    /* Plotly charts: asegurar ancho completo y sin overflow */
-    .stPlotlyChart {{
-      width: 100% !important;
-      overflow-x: hidden !important;
-    }}
-    .stPlotlyChart > div {{
-      width: 100% !important;
-    }}
-
-    /* Dataframe: scroll horizontal habilitado */
-    [data-testid="stDataFrame"] {{
-      overflow-x: auto !important;
-      -webkit-overflow-scrolling: touch;
-    }}
-
-    /* Columnas de Streamlit en mobile: 
-       forzar wrap para que las 3 métricas
-       se apilen de a una o de a dos */
-    [data-testid="stHorizontalBlock"] {{
-      flex-wrap: wrap !important;
-      gap: 8px !important;
-    }}
-    [data-testid="stHorizontalBlock"] > div {{
-      min-width: 140px !important;
-      flex: 1 1 140px !important;
-    }}
-
-    /* Caption más pequeño */
-    .stCaption {{
-      font-size: 0.68rem !important;
-    }}
-  }}
-
-  /* Tablet (769px – 1024px): ajuste intermedio */
-  @media (min-width: 769px) and (max-width: 1024px) {{
-    .block-container {{
-      padding-left: 1.2rem !important;
-      padding-right: 1.2rem !important;
-    }}
-    [data-testid="stMetricValue"] {{
-      font-size: 1.5rem !important;
-    }}
-  }}
 
 </style>
 """, unsafe_allow_html=True)
@@ -455,32 +352,12 @@ LAYOUT_BASE = dict(
 )
 
 # ── Cabecera ──────────────────────────────────────────────────────────────────
-# Botón de toggle del sidebar (reemplaza el botón nativo que rompe en Streamlit Cloud)
-import streamlit.components.v1 as components
-
-col_menu, col_title = st.columns([0.06, 0.94])
-with col_menu:
-    if st.button("[ ]", help="Mostrar / ocultar panel lateral", key="toggle_sidebar"):
-        components.html("""
-        <script>
-            const sidebar = window.parent.document.querySelector('[data-testid="stSidebar"]');
-            const btn = window.parent.document.querySelector('[data-testid="stSidebarCollapseButton"] button')
-                     || window.parent.document.querySelector('[data-testid="collapsedControl"] button');
-            if (btn) { btn.click(); }
-            else if (sidebar) {
-                const current = sidebar.style.display;
-                sidebar.style.display = current === "none" ? "" : "none";
-            }
-        </script>
-        """, height=0)
-
-with col_title:
-    st.markdown("# Dashboard Comercial")
-    st.markdown(
-        f"<p style='color:{TEXT_MUTED};font-size:0.82rem;margin-top:-8px;margin-bottom:4px;'>"
-        f"Panadería · Análisis de ventas</p>",
-        unsafe_allow_html=True
-    )
+st.markdown("# Dashboard Comercial")
+st.markdown(
+    f"<p style='color:{TEXT_MUTED};font-size:0.82rem;margin-top:-8px;margin-bottom:20px;'>"
+    f"Panadería · Análisis de ventas</p>",
+    unsafe_allow_html=True
+)
 st.markdown("---")
 
 # ── KPIs ──────────────────────────────────────────────────────────────────────
