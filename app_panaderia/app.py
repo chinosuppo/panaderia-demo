@@ -188,16 +188,78 @@ st.markdown(f"""
   .stCaption {{ color: {TEXT_MUTED} !important; font-size: 0.72rem !important; }}
   .stMarkdown p {{ color: {TEXT_SUB}; font-size: 0.88rem; }}
 
-  /* ── Ocultar botón nativo del sidebar (muestra texto roto) ─────────────── */
+  /* ── Botón nativo del sidebar: ocultar texto roto, mostrar flecha CSS ───── */
+
+  /* El contenedor del botón: visible y con tamaño fijo */
   [data-testid="stSidebarCollapseButton"],
   [data-testid="collapsedControl"] {{
-    display: none !important;
-    visibility: hidden !important;
-    width: 0 !important;
-    height: 0 !important;
-    overflow: hidden !important;
+    display: flex !important;
+    visibility: visible !important;
+    position: relative !important;
+    width: 2.2rem !important;
+    height: 2.2rem !important;
+    overflow: visible !important;
+  }}
+
+  /* El botón interno: caja sin texto visible */
+  [data-testid="stSidebarCollapseButton"] button,
+  [data-testid="collapsedControl"] button {{
+    width: 2.2rem !important;
+    height: 2.2rem !important;
+    min-width: 2.2rem !important;
+    padding: 0 !important;
+    border-radius: 8px !important;
+    background: {BG_CARD} !important;
+    border: 1px solid {BORDER} !important;
+    cursor: pointer !important;
+    position: relative !important;
+    overflow: hidden !important;  /* oculta el texto del ícono Material */
+    color: transparent !important;
+    font-size: 0 !important;
+  }}
+
+  /* Todos los spans/svgs internos: invisible */
+  [data-testid="stSidebarCollapseButton"] button *,
+  [data-testid="collapsedControl"] button * {{
+    color: transparent !important;
+    fill: transparent !important;
+    opacity: 0 !important;
+    font-size: 0 !important;
+  }}
+
+  /* Flecha dibujada con ::after, sin dependencia de fuentes */
+  [data-testid="stSidebarCollapseButton"] button::after {{
+    content: "‹" !important;
     position: absolute !important;
-    pointer-events: none !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    font-size: 1.5rem !important;
+    font-weight: 300 !important;
+    color: {TEXT_SUB} !important;
+    line-height: 1 !important;
+    font-family: Georgia, serif !important;
+    opacity: 1 !important;
+  }}
+  [data-testid="collapsedControl"] button::after {{
+    content: "›" !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    font-size: 1.5rem !important;
+    font-weight: 300 !important;
+    color: {TEXT_SUB} !important;
+    line-height: 1 !important;
+    font-family: Georgia, serif !important;
+    opacity: 1 !important;
+  }}
+
+  /* Hover */
+  [data-testid="stSidebarCollapseButton"] button:hover,
+  [data-testid="collapsedControl"] button:hover {{
+    background: {BORDER} !important;
+    border-color: {ACCENT} !important;
   }}
 
 
