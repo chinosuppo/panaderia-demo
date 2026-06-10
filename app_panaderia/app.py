@@ -4,6 +4,11 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
 
+# ── Helpers ───────────────────────────────────────────────────────────────────
+def fmt_ars(valor: float) -> str:
+    """Formatea un número con separador de miles (punto), estilo argentino. Ej: $17.316.000"""
+    return "$" + f"{int(valor):,}".replace(",", ".")
+
 # ── Configuración de página ──────────────────────────────────────────────────
 st.set_page_config(
     page_title="Dashboard Panadería",
@@ -291,10 +296,6 @@ LAYOUT_BASE = dict(
     font_family   = "DM Sans",
     font_color    = TEXT_MAIN,
 )
-
-def fmt_ars(valor: float) -> str:
-    """Formatea un número con separador de miles punto, estilo argentino. Ej: $17.316.000"""
-    return "$" + f"{int(valor):,}".replace(",", ".")
 
 # ── Gráfico 1: Barras ─────────────────────────────────────────────────────────
 st.markdown("### Total Ingreso por Producto")
