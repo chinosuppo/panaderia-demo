@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit.components.v1 as components
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -21,8 +20,6 @@ st.set_page_config(
 # ── Estado del tema ───────────────────────────────────────────────────────────
 if "tema_oscuro" not in st.session_state:
     st.session_state.tema_oscuro = False
-if "sidebar_visible" not in st.session_state:
-    st.session_state.sidebar_visible = True
 
 DARK = st.session_state.tema_oscuro
 
@@ -202,32 +199,7 @@ st.markdown(f"""
 
   /* expander eliminado — se usa botón nativo sin íconos problemáticos */
 
-  /* ── Botón toggle sidebar custom ──────────────────────────────────────────── */
-  div[data-testid="stMainBlockContainer"] div[data-testid="stHorizontalBlock"]
-    div:first-child div[data-testid="stButton"] button {{
-    background: {BG_CARD} !important;
-    border: 1px solid {BORDER} !important;
-    border-radius: 8px !important;
-    color: {TEXT_SUB} !important;
-    font-size: 1.3rem !important;
-    font-family: Georgia, serif !important;
-    font-weight: 300 !important;
-    width: 2.4rem !important;
-    height: 2.4rem !important;
-    min-width: 2.4rem !important;
-    padding: 0 !important;
-    line-height: 1 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: pointer !important;
-    transition: background 0.15s, border-color 0.15s !important;
-  }}
-  div[data-testid="stMainBlockContainer"] div[data-testid="stHorizontalBlock"]
-    div:first-child div[data-testid="stButton"] button:hover {{
-    background: {BORDER} !important;
-    border-color: {ACCENT} !important;
-  }}
+
 
 </style>
 """, unsafe_allow_html=True)
@@ -375,43 +347,12 @@ LAYOUT_BASE = dict(
 )
 
 # ── Cabecera ──────────────────────────────────────────────────────────────────
-col_btn, col_head = st.columns([0.07, 0.93])
-
-with col_btn:
-    flecha = "‹" if st.session_state.sidebar_visible else "›"
-    if st.button(flecha, key="btn_sidebar"):
-        st.session_state.sidebar_visible = not st.session_state.sidebar_visible
-        # JS: hacer click en el botón nativo oculto para que Streamlit
-        # realmente colapse/expanda el sidebar
-        components.html("""
-            <script>
-            (function() {
-                var attempts = 0;
-                function tryClick() {
-                    var btn = window.parent.document.querySelector(
-                        '[data-testid="stSidebarCollapseButton"] button, ' +
-                        '[data-testid="collapsedControl"] button, ' +
-                        '[data-testid="stSidebarCollapsedControl"] button'
-                    );
-                    if (btn) {
-                        btn.click();
-                    } else if (attempts < 10) {
-                        attempts++;
-                        setTimeout(tryClick, 100);
-                    }
-                }
-                tryClick();
-            })();
-            </script>
-        """, height=0, scrolling=False)
-
-with col_head:
-    st.markdown("# Dashboard Comercial")
-    st.markdown(
-        f"<p style='color:{TEXT_MUTED};font-size:0.82rem;margin-top:-8px;margin-bottom:4px;'>"
-        f"Panadería · Análisis de ventas</p>",
-        unsafe_allow_html=True
-    )
+st.markdown("# Dashboard Comercial")
+st.markdown(
+    f"<p style='color:{TEXT_MUTED};font-size:0.82rem;margin-top:-8px;margin-bottom:20px;'>"
+    f"Panadería · Análisis de ventas</p>",
+    unsafe_allow_html=True
+)
 st.markdown("---")
 
 # ── KPIs ──────────────────────────────────────────────────────────────────────
