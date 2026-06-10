@@ -6,12 +6,12 @@ from datetime import datetime
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 def fmt_ars(valor: float) -> str:
-    """Formatea un número con separador de miles (punto), estilo argentino. Ej: $17.316.000"""
+    """$17.316.000 — separador de miles con punto, estilo argentino."""
     return "$" + f"{int(valor):,}".replace(",", ".")
 
-# ── Configuración de página ──────────────────────────────────────────────────
+# ── Configuración de página ───────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Dashboard Panadería",
+    page_title="Panadería · Dashboard",
     page_icon="🥐",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -23,150 +23,178 @@ if "tema_oscuro" not in st.session_state:
 
 DARK = st.session_state.tema_oscuro
 
-# ── Tokens de diseño según tema ───────────────────────────────────────────────
+# ── Tokens de diseño ─────────────────────────────────────────────────────────
 if DARK:
-    BG          = "#0F0A07"
-    BG_CARD     = "#1C1209"
-    BG_PLOT     = "#1C1209"
-    BG_SIDEBAR  = "#0A0604"
-    BORDER      = "#3D2810"
-    TEXT_MAIN   = "#F5EDD8"
-    TEXT_SUB    = "#C4A07A"
-    TEXT_MUTED  = "#7A5C40"
-    ACCENT      = "#E8943A"
-    GRID        = "#2A1A0A"
-    SHADOW      = "rgba(0,0,0,0.4)"
-    HR_COLOR    = "#3D2810"
-    SIDEBAR_TXT = "#F5EDD8"
-    LEGEND_BG   = "#1C1209"
-    HEATMAP_0   = "#1C1209"
-    HEATMAP_1   = "#4A2810"
-    HEATMAP_2   = "#C17B3A"
-    HEATMAP_3   = "#F5A84A"
-    TREEMAP_SCALE = ["#1C1209", "#4A2810", "#C17B3A", "#F5A84A"]
-    BTN_TEMA_LABEL = "☀️  Tema Claro"
+    BG           = "#0D0D0D"
+    BG_CARD      = "#161616"
+    BG_PLOT      = "#161616"
+    BG_SIDEBAR   = "#111111"
+    BORDER       = "#2A2A2A"
+    TEXT_MAIN    = "#F0F0F0"
+    TEXT_SUB     = "#A0A0A0"
+    TEXT_MUTED   = "#555555"
+    ACCENT       = "#E8943A"
+    ACCENT2      = "#C17B3A"
+    GRID         = "#222222"
+    SHADOW       = "rgba(0,0,0,0.5)"
+    LEGEND_BG    = "#161616"
+    BANNER_BG    = "#1E1A14"
+    BANNER_BORDER= "#3D2810"
+    BANNER_TEXT  = "#E8C49A"
+    HEATMAP      = ["#161616","#2A1A0A","#C17B3A","#F5A84A"]
+    TREEMAP      = ["#1A1A1A","#2A1A0A","#C17B3A","#F5A84A"]
+    BTN_TEMA     = "☀️  Modo claro"
 else:
-    BG          = "#FAF7F2"
-    BG_CARD     = "#FFFFFF"
-    BG_PLOT     = "#FAF7F2"
-    BG_SIDEBAR  = "#2C1810"
-    BORDER      = "#E8DDD0"
-    TEXT_MAIN   = "#2C1810"
-    TEXT_SUB    = "#4A2E1A"
-    TEXT_MUTED  = "#9B8070"
-    ACCENT      = "#8B5E3C"
-    GRID        = "#EDE3D8"
-    SHADOW      = "rgba(44,24,16,0.06)"
-    HR_COLOR    = "#E8DDD0"
-    SIDEBAR_TXT = "#F5EDD8"
-    LEGEND_BG   = "#FFFFFF"
-    HEATMAP_0   = "#FBF3E8"
-    HEATMAP_1   = "#E8C49A"
-    HEATMAP_2   = "#C17B3A"
-    HEATMAP_3   = "#6B2010"
-    TREEMAP_SCALE = ["#F5EDD8", "#C17B3A", "#8B3A2A", "#4A2E1A"]
-    BTN_TEMA_LABEL = "🌙  Tema Oscuro"
+    BG           = "#F8F9FA"
+    BG_CARD      = "#FFFFFF"
+    BG_PLOT      = "#FFFFFF"
+    BG_SIDEBAR   = "#111111"
+    BORDER       = "#E5E7EB"
+    TEXT_MAIN    = "#111827"
+    TEXT_SUB     = "#6B7280"
+    TEXT_MUTED   = "#9CA3AF"
+    ACCENT       = "#D97706"
+    ACCENT2      = "#92400E"
+    GRID         = "#F3F4F6"
+    SHADOW       = "rgba(0,0,0,0.06)"
+    LEGEND_BG    = "#FFFFFF"
+    BANNER_BG    = "#FFFBEB"
+    BANNER_BORDER= "#FDE68A"
+    BANNER_TEXT  = "#92400E"
+    HEATMAP      = ["#F9FAFB","#FEF3C7","#F59E0B","#92400E"]
+    TREEMAP      = ["#F9FAFB","#FEF3C7","#F59E0B","#92400E"]
+    BTN_TEMA     = "🌙  Modo oscuro"
 
-PALETTE = [
-    "#C17B3A", "#E8943A", "#4A7C59", "#2C7BB5",
-    "#9B59B6", "#F0C040", "#5A8A6E", "#C0394B",
-]
+PALETTE = ["#F59E0B","#EF4444","#10B981","#3B82F6","#8B5CF6","#EC4899"]
 
-# ── CSS dinámico ──────────────────────────────────────────────────────────────
+# ── CSS ───────────────────────────────────────────────────────────────────────
 st.markdown(f"""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-    html, body, [class*="css"] {{
-        font-family: 'DM Sans', sans-serif;
-    }}
+  html, body, [class*="css"], .stMarkdown, p, span, label {{
+    font-family: 'Inter', sans-serif !important;
+  }}
 
-    .stApp {{
-        background-color: {BG};
-    }}
+  .stApp {{ background-color: {BG}; }}
 
-    /* Sidebar */
-    [data-testid="stSidebar"] {{
-        background-color: {BG_SIDEBAR};
-    }}
-    [data-testid="stSidebar"] * {{
-        color: {SIDEBAR_TXT} !important;
-    }}
-    [data-testid="stSidebar"] .stMultiSelect [data-baseweb="select"] {{
-        background-color: {"#0A0604" if DARK else "#3D2318"};
-        border-color: {"#5A3010" if DARK else "#8B5E3C"};
-    }}
+  /* ── Sidebar ── */
+  [data-testid="stSidebar"] {{ background-color: {BG_SIDEBAR}; border-right: 1px solid #1F1F1F; }}
+  [data-testid="stSidebar"] * {{ color: #E5E7EB !important; }}
+  [data-testid="stSidebar"] .stMultiSelect [data-baseweb="tag"] {{
+    background-color: #2A2A2A !important;
+    border: 1px solid #444 !important;
+    border-radius: 4px !important;
+  }}
+  [data-testid="stSidebar"] .stMultiSelect [data-baseweb="tag"] span {{
+    color: #D1D5DB !important;
+    font-size: 0.78rem !important;
+  }}
+  [data-testid="stSidebar"] .stMultiSelect [data-baseweb="select"] {{
+    background-color: #1A1A1A !important;
+    border-color: #333 !important;
+  }}
+  [data-testid="stSidebar"] .stButton button {{
+    background-color: #1A1A1A;
+    border: 1px solid #333;
+    color: #E5E7EB !important;
+    font-size: 0.82rem;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: background 0.15s;
+  }}
+  [data-testid="stSidebar"] .stButton button:hover {{
+    background-color: #252525 !important;
+    border-color: #555 !important;
+  }}
 
-    /* Títulos */
-    h1 {{
-        font-family: 'DM Serif Display', serif !important;
-        color: {TEXT_MAIN} !important;
-        font-size: 2.4rem !important;
-        letter-spacing: -0.5px;
-    }}
-    h2, h3 {{
-        font-family: 'DM Serif Display', serif !important;
-        color: {TEXT_SUB} !important;
-    }}
+  /* ── Cabecera ── */
+  h1 {{
+    font-family: 'Inter', sans-serif !important;
+    font-size: 1.6rem !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.03em !important;
+    color: {TEXT_MAIN} !important;
+    margin-bottom: 2px !important;
+  }}
+  h2, h3 {{
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 600 !important;
+    color: {TEXT_MAIN} !important;
+    font-size: 1rem !important;
+    letter-spacing: -0.01em !important;
+    margin-top: 0 !important;
+  }}
 
-    /* Tarjetas métricas */
-    [data-testid="stMetric"] {{
-        background: {BG_CARD};
-        border: 1px solid {BORDER};
-        border-radius: 12px;
-        padding: 20px 24px !important;
-        box-shadow: 0 2px 8px {SHADOW};
-    }}
-    [data-testid="stMetricLabel"] {{
-        font-family: 'DM Sans', sans-serif !important;
-        font-size: 0.82rem !important;
-        font-weight: 600 !important;
-        letter-spacing: 0.08em !important;
-        text-transform: uppercase !important;
-        color: {ACCENT} !important;
-    }}
-    [data-testid="stMetricValue"] {{
-        font-family: 'DM Serif Display', serif !important;
-        font-size: 2rem !important;
-        color: {TEXT_MAIN} !important;
-    }}
+  /* ── Métricas ── */
+  [data-testid="stMetric"] {{
+    background: {BG_CARD};
+    border: 1px solid {BORDER};
+    border-radius: 10px;
+    padding: 18px 22px !important;
+    box-shadow: 0 1px 3px {SHADOW};
+  }}
+  [data-testid="stMetricLabel"] {{
+    font-family: 'Inter', sans-serif !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+    color: {TEXT_SUB} !important;
+  }}
+  [data-testid="stMetricValue"] {{
+    font-family: 'Inter', sans-serif !important;
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
+    color: {TEXT_MAIN} !important;
+    letter-spacing: -0.02em !important;
+  }}
+  [data-testid="stMetricDelta"] {{
+    font-size: 0.8rem !important;
+    font-weight: 500 !important;
+  }}
 
-    /* Divisor */
-    hr {{
-        border-color: {HR_COLOR};
-        margin: 8px 0 24px 0;
-    }}
+  /* ── Divisor ── */
+  hr {{ border-color: {BORDER}; margin: 4px 0 20px 0; }}
 
-    /* Caption */
-    .caption-text {{
-        font-size: 0.78rem;
-        color: {TEXT_MUTED};
-        margin-top: -12px;
-        margin-bottom: 16px;
-    }}
+  /* ── Banner de insight ── */
+  .insight-banner {{
+    background: {BANNER_BG};
+    border: 1px solid {BANNER_BORDER};
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 12px;
+    font-size: 0.84rem;
+    font-weight: 500;
+    color: {BANNER_TEXT};
+    font-family: 'Inter', sans-serif;
+  }}
 
-    /* Expander */
-    [data-testid="stExpander"] {{
-        background-color: {BG_CARD};
-        border: 1px solid {BORDER};
-        border-radius: 8px;
-    }}
-    [data-testid="stExpander"] summary {{
-        color: {TEXT_MAIN} !important;
-    }}
+  /* ── Sección título ── */
+  .section-label {{
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: {TEXT_MUTED};
+    margin-bottom: 6px;
+    font-family: 'Inter', sans-serif;
+  }}
 
-    /* Dataframe */
-    [data-testid="stDataFrame"] {{
-        background-color: {BG_CARD};
-    }}
+  /* ── Expander ── */
+  [data-testid="stExpander"] {{
+    background: {BG_CARD};
+    border: 1px solid {BORDER};
+    border-radius: 8px;
+  }}
+  [data-testid="stExpander"] summary, [data-testid="stExpander"] p {{
+    color: {TEXT_MAIN} !important;
+  }}
 
-    /* Texto general en main */
-    .stMarkdown p, .stMarkdown li {{
-        color: {TEXT_MAIN};
-    }}
-    .stCaption {{
-        color: {TEXT_MUTED} !important;
-    }}
+  .stCaption {{ color: {TEXT_MUTED} !important; font-size: 0.75rem !important; }}
+
+  /* Texto general */
+  .stMarkdown p {{ color: {TEXT_SUB}; font-size: 0.9rem; }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -183,12 +211,11 @@ def cargar_datos(url: str) -> pd.DataFrame:
     df.columns = df.columns.str.strip()
     df["Fecha"] = pd.to_datetime(df["Fecha"], dayfirst=True, errors="coerce")
 
-    def limpiar_numero(serie: pd.Series) -> pd.Series:
-        s = serie.astype(str).str.strip().str.replace(r"[\$\s]", "", regex=True)
+    def limpiar_numero(s: pd.Series) -> pd.Series:
+        s = s.astype(str).str.strip().str.replace(r"[\$\s]", "", regex=True)
         tiene_punto = s.str.contains(r"\.", regex=True)
         tiene_coma  = s.str.contains(r",",  regex=True)
-        s = s.where(~(tiene_punto & ~tiene_coma),
-                    s.str.replace(".", "", regex=False))
+        s = s.where(~(tiene_punto & ~tiene_coma), s.str.replace(".", "", regex=False))
         s = s.str.replace(",", ".", regex=False)
         s = s.str.replace(r"[^\d.]", "", regex=True)
         return pd.to_numeric(s, errors="coerce")
@@ -202,7 +229,7 @@ def cargar_datos(url: str) -> pd.DataFrame:
     return df
 
 try:
-    with st.spinner("Cargando datos…"):
+    with st.spinner(""):
         df_raw = cargar_datos(CSV_URL)
 except Exception as e:
     st.error(f"❌ No se pudo cargar el CSV.\n\n`{e}`")
@@ -210,217 +237,255 @@ except Exception as e:
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("## 🥐 Panadería")
-    st.markdown("---")
+    st.markdown(
+        f"<div style='font-size:1.1rem;font-weight:700;color:#F9FAFB;"
+        f"letter-spacing:-0.02em;padding:4px 0 12px 0;'>🥐 Panadería</div>",
+        unsafe_allow_html=True
+    )
 
     productos_disponibles = sorted(df_raw["Producto"].unique())
     productos_sel = st.multiselect(
-        "Filtrar por Producto",
+        "Productos",
         options=productos_disponibles,
         default=productos_disponibles,
-        help="Seleccioná uno o más productos para filtrar el dashboard.",
     )
 
-    st.markdown("---")
+    st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
 
     fecha_min = df_raw["Fecha"].min().date()
     fecha_max = df_raw["Fecha"].max().date()
     rango_fechas = st.date_input(
-        "Rango de fechas",
+        "Período",
         value=(fecha_min, fecha_max),
         min_value=fecha_min,
         max_value=fecha_max,
     )
 
-    st.markdown("---")
+    st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
 
-    # Botón tema
-    if st.button(BTN_TEMA_LABEL, use_container_width=True):
+    if st.button(BTN_TEMA, use_container_width=True):
         st.session_state.tema_oscuro = not st.session_state.tema_oscuro
         st.rerun()
 
-    st.markdown("---")
+    st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
 
-    # Botón recarga
-    if st.button("🔄  Actualizar datos", use_container_width=True,
-                 help="Limpia el caché y vuelve a leer el CSV desde Google Sheets."):
+    if st.button("↺  Actualizar datos", use_container_width=True,
+                 help="Limpia el caché y vuelve a leer el CSV."):
         st.cache_data.clear()
         st.rerun()
 
-    st.markdown("---")
+    st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
     ultima_carga = df_raw.attrs.get("cargado_en", "—")
-    st.caption(f"📅 Datos: {fecha_min} → {fecha_max}")
-    st.caption(f"📦 {len(df_raw):,} registros cargados")
-    st.caption(f"🕐 Última carga: {ultima_carga}")
+    st.caption(f"Datos: {fecha_min.strftime('%d/%m/%Y')} → {fecha_max.strftime('%d/%m/%Y')}")
+    st.caption(f"Registros: {len(df_raw):,}   ·   Última carga: {ultima_carga}")
 
 # ── Filtrado ──────────────────────────────────────────────────────────────────
 if not productos_sel:
-    st.warning("⚠️ Seleccioná al menos un producto en el panel lateral.")
+    st.warning("Seleccioná al menos un producto.")
     st.stop()
 
 df = df_raw[df_raw["Producto"].isin(productos_sel)].copy()
 
 if isinstance(rango_fechas, (list, tuple)) and len(rango_fechas) == 2:
-    fecha_inicio, fecha_fin = rango_fechas
-    df = df[(df["Fecha"].dt.date >= fecha_inicio) & (df["Fecha"].dt.date <= fecha_fin)]
+    fi, ff = rango_fechas
+    df = df[(df["Fecha"].dt.date >= fi) & (df["Fecha"].dt.date <= ff)]
 
 if df.empty:
-    st.warning("Sin datos para la combinación de filtros seleccionada.")
+    st.warning("Sin datos para los filtros seleccionados.")
     st.stop()
 
-# ── Cabecera ──────────────────────────────────────────────────────────────────
-st.markdown("# Dashboard Comercial — Gestión Panadería")
-st.markdown(f'<p class="caption-text">Análisis de ventas · Enero–Mayo 2026</p>',
-            unsafe_allow_html=True)
-st.markdown("---")
+# ── Cálculos de insights ──────────────────────────────────────────────────────
+df["Mes"]    = df["Fecha"].dt.to_period("M")
+df["Semana"] = df["Fecha"].dt.to_period("W")
 
-# ── Métricas ──────────────────────────────────────────────────────────────────
-venta_total    = df["Total_Venta"].sum()
-cantidad_total = df["Cantidad Vendida"].sum()
-promedio_ticket= df["Total_Venta"].mean()
+por_mes      = df.groupby("Mes")["Total_Venta"].sum()
+por_producto = df.groupby("Producto")["Total_Venta"].sum().sort_values(ascending=False)
 
-col1, col2, col3 = st.columns(3)
-with col1:
-    st.metric("💰 Total Ingreso",         fmt_ars(venta_total))
-with col2:
-    st.metric("📦 Cantidad Total Vendida", f"{cantidad_total:,.0f} uds.")
-with col3:
-    st.metric("🧾 Promedio por Ticket",   fmt_ars(promedio_ticket))
+mejor_mes    = por_mes.idxmax()
+peor_mes     = por_mes.idxmin()
+top_producto = por_producto.index[0]
+bot_producto = por_producto.index[-1]
 
-st.markdown("<br>", unsafe_allow_html=True)
+MESES_ES = {1:"Enero",2:"Febrero",3:"Marzo",4:"Abril",5:"Mayo",
+            6:"Junio",7:"Julio",8:"Agosto",9:"Septiembre",
+            10:"Octubre",11:"Noviembre",12:"Diciembre"}
 
-# ── Layout compartido para los gráficos ──────────────────────────────────────
+mejor_mes_str = MESES_ES[mejor_mes.month]
+peor_mes_str  = MESES_ES[peor_mes.month]
+
+venta_total     = df["Total_Venta"].sum()
+cantidad_total  = df["Cantidad Vendida"].sum()
+promedio_ticket = df["Total_Venta"].mean()
+
+# Variación mes a mes (últimos dos meses con datos)
+meses_ord = por_mes.sort_index()
+if len(meses_ord) >= 2:
+    delta_pct = (meses_ord.iloc[-1] - meses_ord.iloc[-2]) / meses_ord.iloc[-2] * 100
+    delta_label = f"{delta_pct:+.1f}% vs mes anterior"
+else:
+    delta_label = None
+
 LAYOUT_BASE = dict(
     plot_bgcolor  = BG_PLOT,
     paper_bgcolor = BG_PLOT,
-    font_family   = "DM Sans",
+    font_family   = "Inter",
     font_color    = TEXT_MAIN,
 )
 
-# ── Gráfico 1: Barras ─────────────────────────────────────────────────────────
+# ── Cabecera ──────────────────────────────────────────────────────────────────
+st.markdown("# Dashboard Comercial")
+st.markdown(
+    f"<p style='color:{TEXT_MUTED};font-size:0.82rem;margin-top:-8px;margin-bottom:20px;'>"
+    f"Panadería · Análisis de ventas</p>",
+    unsafe_allow_html=True
+)
+st.markdown("---")
+
+# ── KPIs ──────────────────────────────────────────────────────────────────────
+c1, c2, c3 = st.columns(3)
+with c1:
+    st.metric("Total Ingreso", fmt_ars(venta_total), delta=delta_label)
+with c2:
+    st.metric("Unidades Vendidas", f"{int(cantidad_total):,}".replace(",","."))
+with c3:
+    st.metric("Ticket Promedio", fmt_ars(promedio_ticket))
+
+st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
+
+# ══════════════════════════════════════════════════════════════════════════════
+# GRÁFICO 1 — Barras: Total Ingreso por Producto
+# ══════════════════════════════════════════════════════════════════════════════
+top2 = por_producto.head(2)
+insight_barras = (
+    f"🏆 <b>{top_producto}</b> lidera con {fmt_ars(por_producto[top_producto])} "
+    f"— {por_producto[top_producto]/venta_total*100:.1f}% del total. "
+    f"<b>{bot_producto}</b> es el de menor ingreso con {fmt_ars(por_producto[bot_producto])}."
+)
+st.markdown(f"<div class='insight-banner'>{insight_barras}</div>", unsafe_allow_html=True)
 st.markdown("### Total Ingreso por Producto")
 
-ventas_producto = (
-    df.groupby("Producto", as_index=False)["Total_Venta"]
-    .sum().sort_values("Total_Venta", ascending=False)
-)
-
-# Etiqueta encima de cada barra con formato argentino (punto como miles)
-ventas_producto["label_ars"] = ventas_producto["Total_Venta"].apply(fmt_ars)
+vp = por_producto.reset_index()
+vp.columns = ["Producto", "Total_Venta"]
+vp["label_ars"] = vp["Total_Venta"].apply(fmt_ars)
 
 fig_barras = px.bar(
-    ventas_producto, x="Producto", y="Total_Venta",
-    text="label_ars",          # etiqueta ya formateada
-    color="Producto",
+    vp, x="Producto", y="Total_Venta",
+    text="label_ars", color="Producto",
     color_discrete_sequence=PALETTE,
-    custom_data=["label_ars"], # disponible como %{customdata[0]} por fila
+    custom_data=["label_ars"],
 )
-
 fig_barras.update_traces(
     texttemplate="%{text}",
     textposition="outside",
-    textfont=dict(size=13, color=TEXT_MAIN, family="DM Sans"),
+    textfont=dict(size=12, color=TEXT_MAIN, family="Inter"),
     marker_line_width=0,
-    width=0.55,
-    # %{x} = nombre del producto (correcto por trace), %{customdata[0]} = label_ars
-    hovertemplate=(
-        "<b>Producto:</b> %{x}<br>"
-        "<b>Total Ingreso:</b> %{customdata[0]}"
-        "<extra></extra>"
-    ),
+    width=0.5,
+    hovertemplate="<b>%{x}</b><br>Total Ingreso: %{customdata[0]}<extra></extra>",
 )
 fig_barras.update_layout(
     **LAYOUT_BASE,
     showlegend=False,
-    xaxis=dict(title="", tickfont=dict(size=13, color=TEXT_MAIN), gridcolor="rgba(0,0,0,0)", tickangle=0),
-    yaxis=dict(title="Total Ingreso ($)", tickformat="$,.0f", tickfont=dict(size=12, color=TEXT_MAIN),
-               gridcolor=GRID, gridwidth=1, zeroline=False),
-    margin=dict(t=50, b=60, l=10, r=10),
-    height=440,
-    uniformtext=dict(minsize=11, mode="show"),
+    xaxis=dict(title="", tickfont=dict(size=12, color=TEXT_SUB), gridcolor="rgba(0,0,0,0)", tickangle=0),
+    yaxis=dict(title="", tickformat="$,.0f", tickfont=dict(size=11, color=TEXT_MUTED),
+               gridcolor=GRID, gridwidth=1, zeroline=False, showticklabels=False),
+    margin=dict(t=40, b=40, l=0, r=0),
+    height=380,
+    uniformtext=dict(minsize=10, mode="show"),
 )
 st.plotly_chart(fig_barras, use_container_width=True)
 
-# ── Gráfico 2: Líneas ─────────────────────────────────────────────────────────
-st.markdown("### Evolución de Total Ingreso en el Tiempo")
+# ══════════════════════════════════════════════════════════════════════════════
+# GRÁFICO 2 — Barras apiladas por semana
+# ══════════════════════════════════════════════════════════════════════════════
+df_sem = df.groupby(["Semana", "Producto"], as_index=False)["Total_Venta"].sum()
+df_sem["Semana_str"] = df_sem["Semana"].astype(str)
+df_sem["Ingreso_str"] = df_sem["Total_Venta"].apply(fmt_ars)
 
-ventas_tiempo = df.groupby(["Fecha", "Producto"], as_index=False)["Total_Venta"].sum()
-ventas_tiempo["Fecha_str"]   = ventas_tiempo["Fecha"].dt.strftime("%d/%m/%Y")
-ventas_tiempo["Ingreso_str"] = ventas_tiempo["Total_Venta"].apply(fmt_ars)
+semana_top    = df.groupby("Semana")["Total_Venta"].sum().idxmax()
+semana_top_v  = df.groupby("Semana")["Total_Venta"].sum().max()
+semana_top_str= str(semana_top)
 
-# custom_data como lista de columnas → px.line hace el slice por trace automáticamente
-fig_lineas = px.line(
-    ventas_tiempo, x="Fecha", y="Total_Venta",
+insight_sem = (
+    f"📅 La semana con mayor ingreso fue <b>{semana_top_str}</b> "
+    f"con {fmt_ars(semana_top_v)}. "
+    f"El mes más fuerte fue <b>{mejor_mes_str}</b> "
+    f"({fmt_ars(por_mes[mejor_mes])}) y el más débil <b>{peor_mes_str}</b> "
+    f"({fmt_ars(por_mes[peor_mes])})."
+)
+st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
+st.markdown(f"<div class='insight-banner'>{insight_sem}</div>", unsafe_allow_html=True)
+st.markdown("### Ingreso Semanal por Producto")
+
+fig_sem = px.bar(
+    df_sem, x="Semana_str", y="Total_Venta",
     color="Producto", color_discrete_sequence=PALETTE,
-    line_shape="spline", markers=True,
-    custom_data=["Producto", "Fecha_str", "Ingreso_str"],
+    custom_data=["Producto","Ingreso_str"],
+    barmode="stack",
 )
-fig_lineas.update_traces(
-    marker=dict(size=5, line=dict(width=1.5, color=BG_PLOT)),
-    line=dict(width=2.5),
-    hovertemplate=(
-        "<b>%{customdata[0]}</b><br>"
-        "Fecha: %{customdata[1]}<br>"
-        "Total Ingreso: %{customdata[2]}"
-        "<extra></extra>"
-    ),
+fig_sem.update_traces(
+    hovertemplate="<b>%{customdata[0]}</b><br>Semana: %{x}<br>Ingreso: %{customdata[1]}<extra></extra>",
+    marker_line_width=0,
 )
-fig_lineas.update_layout(
+fig_sem.update_layout(
     **LAYOUT_BASE,
     legend=dict(
-        title=dict(text="Producto", font=dict(size=13, color=TEXT_MAIN, family="DM Sans")),
-        bgcolor=LEGEND_BG,
-        bordercolor=ACCENT,
-        borderwidth=1.5,
-        font=dict(size=12, color=TEXT_MAIN, family="DM Sans"),
-        x=1.01, xanchor="left", y=1, yanchor="top",
+        title=None,
+        bgcolor=LEGEND_BG, bordercolor=BORDER, borderwidth=1,
+        font=dict(size=11, color=TEXT_SUB),
+        orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0,
     ),
-    xaxis=dict(title="", tickformat="%d/%m/%Y", tickfont=dict(size=12, color=TEXT_MAIN),
-               gridcolor=GRID, gridwidth=1),
-    yaxis=dict(title="Total Ingreso ($)", tickformat="$,.0f", tickfont=dict(size=12, color=TEXT_MAIN),
+    xaxis=dict(title="", tickfont=dict(size=10, color=TEXT_MUTED),
+               gridcolor="rgba(0,0,0,0)", tickangle=-35),
+    yaxis=dict(title="", tickformat="$,.0f", tickfont=dict(size=11, color=TEXT_MUTED),
                gridcolor=GRID, gridwidth=1, zeroline=False),
-    margin=dict(t=20, b=10, l=10, r=160),
-    height=420,
+    margin=dict(t=40, b=60, l=0, r=0),
+    height=400,
     hovermode="closest",
 )
-st.plotly_chart(fig_lineas, use_container_width=True)
+st.plotly_chart(fig_sem, use_container_width=True)
 
-# ── Gráfico 3: Treemap ────────────────────────────────────────────────────────
-st.markdown("### Participación de Ventas por Producto")
+# ══════════════════════════════════════════════════════════════════════════════
+# GRÁFICO 3 — Treemap: Participación
+# ══════════════════════════════════════════════════════════════════════════════
+vt = por_producto.reset_index()
+vt.columns = ["Producto","Total_Venta"]
+vt["Porcentaje"] = (vt["Total_Venta"] / vt["Total_Venta"].sum() * 100).round(1)
+top1_pct = vt.loc[vt["Total_Venta"].idxmax(), "Porcentaje"]
+top2_sum  = vt.nlargest(2,"Total_Venta")["Porcentaje"].sum()
 
-ventas_treemap = (
-    df.groupby("Producto", as_index=False)["Total_Venta"].sum()
-    .assign(Porcentaje=lambda d: (d["Total_Venta"] / d["Total_Venta"].sum() * 100).round(1))
+insight_tree = (
+    f"🍰 <b>{top_producto}</b> concentra el <b>{top1_pct:.1f}%</b> del ingreso total. "
+    f"Los dos productos líderes suman el <b>{top2_sum:.1f}%</b>."
 )
+st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
+st.markdown(f"<div class='insight-banner'>{insight_tree}</div>", unsafe_allow_html=True)
+st.markdown("### Participación por Producto")
 
 fig_treemap = px.treemap(
-    ventas_treemap, path=["Producto"], values="Total_Venta",
-    color="Total_Venta",
-    color_continuous_scale=TREEMAP_SCALE,
+    vt, path=["Producto"], values="Total_Venta",
+    color="Total_Venta", color_continuous_scale=TREEMAP,
     custom_data=["Porcentaje"],
 )
 fig_treemap.update_traces(
-    texttemplate="<b>%{label}</b><br>$%{value:,.0f}<br>%{customdata[0]:.1f}%",
-    textfont=dict(family="DM Sans", size=14),
-    marker=dict(line=dict(width=2, color=BG_PLOT)),
-    hovertemplate="<b>%{label}</b><br>Total Ingreso: $%{value:,.0f}<br>Participación: %{customdata[0]:.1f}%<extra></extra>",
+    texttemplate="<b>%{label}</b><br>%{customdata[0]:.1f}%",
+    textfont=dict(family="Inter", size=14),
+    marker=dict(line=dict(width=2, color=BG)),
+    hovertemplate="<b>%{label}</b><br>Ingreso: $%{value:,.0f}<br>Participación: %{customdata[0]:.1f}%<extra></extra>",
 )
 fig_treemap.update_layout(
-    **LAYOUT_BASE,
-    coloraxis_showscale=False,
-    margin=dict(t=10, b=10, l=10, r=10),
-    height=400,
+    **LAYOUT_BASE, coloraxis_showscale=False,
+    margin=dict(t=8, b=8, l=8, r=8), height=360,
 )
 st.plotly_chart(fig_treemap, use_container_width=True)
 
-# ── Gráfico 4: Heatmap Pivot Mensual ─────────────────────────────────────────
-st.markdown("### Ventas Mensuales por Producto")
-
-df_pivot = df.copy()
-df_pivot["Mes"] = df_pivot["Fecha"].dt.to_period("M").astype(str)
+# ══════════════════════════════════════════════════════════════════════════════
+# GRÁFICO 4 — Heatmap Mensual
+# ══════════════════════════════════════════════════════════════════════════════
+df_piv = df.copy()
+df_piv["MesStr"] = df_piv["Fecha"].dt.to_period("M").astype(str)
 
 pivot = (
-    df_pivot.groupby(["Producto", "Mes"])["Total_Venta"]
+    df_piv.groupby(["Producto","MesStr"])["Total_Venta"]
     .sum().unstack(fill_value=0).astype(int)
 )
 pivot.columns.name = None
@@ -428,71 +493,80 @@ pivot.index.name   = "Producto"
 pivot["TOTAL"]     = pivot.sum(axis=1)
 pivot              = pivot.sort_values("TOTAL", ascending=False)
 
-meses_map = {
-    "2026-01": "Enero", "2026-02": "Febrero", "2026-03": "Marzo",
-    "2026-04": "Abril",  "2026-05": "Mayo",
-}
-pivot.columns = [meses_map.get(c, c) for c in pivot.columns]
+MESES_MAP = {"2026-01":"Ene","2026-02":"Feb","2026-03":"Mar","2026-04":"Abr","2026-05":"May"}
+pivot.columns = [MESES_MAP.get(c, c) for c in pivot.columns]
 
-meses_cols = [c for c in pivot.columns if c != "TOTAL"]
-z_values   = pivot[meses_cols].values
+mes_cols   = [c for c in pivot.columns if c != "TOTAL"]
+z_vals     = pivot[mes_cols].values
 
-fig_heatmap = go.Figure()
-fig_heatmap.add_trace(go.Heatmap(
-    z=z_values, x=meses_cols, y=pivot.index.tolist(),
-    colorscale=[
-        [0.0, HEATMAP_0], [0.3, HEATMAP_1],
-        [0.6, HEATMAP_2], [1.0, HEATMAP_3],
-    ],
+# Insight: producto con mayor crecimiento mes a mes
+if len(mes_cols) >= 2:
+    crec = pivot[mes_cols[-1]] - pivot[mes_cols[-2]]
+    prod_crec  = crec.idxmax()
+    prod_caida = crec.idxmin()
+    insight_heat = (
+        f"📈 En el último mes <b>{prod_crec}</b> fue el producto con mayor crecimiento "
+        f"({fmt_ars(crec[prod_crec])}). "
+        f"<b>{prod_caida}</b> tuvo la mayor caída ({fmt_ars(crec[prod_caida])})."
+    )
+else:
+    insight_heat = "📊 Seleccioná un rango más amplio para ver variaciones mensuales."
+
+st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
+st.markdown(f"<div class='insight-banner'>{insight_heat}</div>", unsafe_allow_html=True)
+st.markdown("### Ingresos Mensuales por Producto")
+
+fig_heat = go.Figure()
+fig_heat.add_trace(go.Heatmap(
+    z=z_vals, x=mes_cols, y=pivot.index.tolist(),
+    colorscale=[[0,HEATMAP[0]],[0.3,HEATMAP[1]],[0.65,HEATMAP[2]],[1,HEATMAP[3]]],
     showscale=True,
     colorbar=dict(
-        title=dict(text="$ Ventas", font=dict(size=11, family="DM Sans", color=TEXT_MAIN)),
-        tickformat="$,.0f", tickfont=dict(color=TEXT_MAIN),
-        thickness=14, len=0.85,
+        tickformat="$,.0f", tickfont=dict(color=TEXT_SUB, size=10),
+        thickness=12, len=0.8,
+        title=dict(text="", font=dict(size=10)),
     ),
-    hovertemplate="<b>%{y}</b> — %{x}<br>Venta: $%{z:,.0f}<extra></extra>",
-    text=[[f"${v:,.0f}" for v in row] for row in z_values],
+    hovertemplate="<b>%{y}</b> · %{x}<br>Ingreso: $%{z:,.0f}<extra></extra>",
+    text=[[fmt_ars(v) for v in row] for row in z_vals],
     texttemplate="%{text}",
-    textfont=dict(family="DM Sans", size=12, color=TEXT_MAIN),
+    textfont=dict(family="Inter", size=11, color=TEXT_MAIN),
 ))
 
 for prod, total in zip(pivot.index, pivot["TOTAL"].values):
-    fig_heatmap.add_annotation(
-        x=len(meses_cols) - 0.5 + 0.75, y=prod,
-        text=f"<b>${total:,.0f}</b>",
+    fig_heat.add_annotation(
+        x=len(mes_cols) - 0.5 + 0.72, y=prod,
+        text=f"<b>{fmt_ars(total)}</b>",
         showarrow=False,
-        font=dict(size=12, family="DM Sans", color=TEXT_MAIN),
+        font=dict(size=11, family="Inter", color=TEXT_MAIN),
         xref="x", yref="y",
     )
 
-fig_heatmap.add_shape(
+fig_heat.add_shape(
     type="line",
-    x0=len(meses_cols) - 0.5 + 0.25, x1=len(meses_cols) - 0.5 + 0.25,
-    y0=-0.5, y1=len(pivot) - 0.5,
-    line=dict(color=ACCENT, width=2, dash="dot"),
+    x0=len(mes_cols)-0.5+0.22, x1=len(mes_cols)-0.5+0.22,
+    y0=-0.5, y1=len(pivot)-0.5,
+    line=dict(color=ACCENT, width=1.5, dash="dot"),
 )
 
-fig_heatmap.update_layout(
+fig_heat.update_layout(
     **LAYOUT_BASE,
-    xaxis=dict(title="", side="top",
-               tickfont=dict(size=13, color=TEXT_MAIN), gridcolor="rgba(0,0,0,0)"),
-    yaxis=dict(title="", tickfont=dict(size=13, color=TEXT_MAIN),
-               autorange="reversed", gridcolor="rgba(0,0,0,0)"),
-    margin=dict(t=40, b=20, l=10, r=80),
-    height=320,
+    xaxis=dict(title="", side="top", tickfont=dict(size=12, color=TEXT_SUB), gridcolor="rgba(0,0,0,0)"),
+    yaxis=dict(title="", tickfont=dict(size=12, color=TEXT_SUB), autorange="reversed", gridcolor="rgba(0,0,0,0)"),
+    margin=dict(t=36, b=16, l=8, r=90),
+    height=300,
 )
+st.plotly_chart(fig_heat, use_container_width=True)
+st.caption("El color más oscuro = mayor ingreso. La columna derecha es el acumulado del período.")
 
-st.plotly_chart(fig_heatmap, use_container_width=True)
-st.caption("💡 El color más oscuro indica mayor volumen de ventas en ese mes. La columna derecha muestra el total acumulado del período.")
-
-# ── Tabla de detalle ──────────────────────────────────────────────────────────
-with st.expander("📋 Ver tabla de datos filtrados"):
-    df_display = df.copy()
-    df_display["Fecha"]          = df_display["Fecha"].dt.strftime("%d/%m/%Y")
-    df_display["Precio Unitario"]= df_display["Precio Unitario"].apply(lambda x: f"${x:,.0f}")
-    df_display["Total_Venta"]    = df_display["Total_Venta"].apply(lambda x: f"${x:,.0f}")
+# ── Tabla detalle ─────────────────────────────────────────────────────────────
+st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+with st.expander("Ver registros"):
+    dd = df.copy()
+    dd["Fecha"]           = dd["Fecha"].dt.strftime("%d/%m/%Y")
+    dd["Precio Unitario"] = dd["Precio Unitario"].apply(lambda x: fmt_ars(x))
+    dd["Total_Venta"]     = dd["Total_Venta"].apply(lambda x: fmt_ars(x))
     st.dataframe(
-        df_display[["Fecha", "Producto", "Precio Unitario", "Cantidad Vendida", "Total_Venta"]],
+        dd[["Fecha","Producto","Precio Unitario","Cantidad Vendida","Total_Venta"]],
         use_container_width=True, hide_index=True,
     )
-    st.caption(f"{len(df):,} registros mostrados")
+    st.caption(f"{len(df):,} registros")
