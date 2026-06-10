@@ -196,10 +196,7 @@ st.markdown(f"""
   .stCaption {{ color: {TEXT_MUTED} !important; font-size: 0.72rem !important; }}
   .stMarkdown p {{ color: {TEXT_SUB}; font-size: 0.88rem; }}
 
-  /* ── Ocultar completamente el botón nativo del sidebar ─────────────────────
-     Causa: Streamlit Cloud no carga Material Icons y renderiza el nombre
-     del ícono como texto plano ("keyboard_double_arrow_right").
-     Solución: display none sobre el contenedor completo.                    */
+  /* ── Ocultar botón nativo del sidebar (muestra texto roto) ─────────────── */
   [data-testid="stSidebarCollapseButton"],
   [data-testid="collapsedControl"] {{
     display: none !important;
@@ -211,10 +208,23 @@ st.markdown(f"""
     pointer-events: none !important;
   }}
 
-  /* ── Ocultar íconos del expander que se muestran como texto ─────────────── */
-  [data-testid="stExpander"] summary span[data-testid="stExpanderToggleIcon"] {{
-    display: none !important;
+  /* ── Botón custom de toggle sidebar ─────────────────────────────────────── */
+  div[data-testid="stButton"][id*="toggle_sidebar"] button,
+  button[key="toggle_sidebar"] {{
+    background: {BG_CARD} !important;
+    border: 1px solid {BORDER} !important;
+    border-radius: 8px !important;
+    color: {TEXT_SUB} !important;
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    padding: 6px 10px !important;
+    min-width: 36px !important;
+    height: 36px !important;
+    line-height: 1 !important;
+    cursor: pointer !important;
   }}
+
+  /* expander eliminado — se usa botón nativo sin íconos problemáticos */
 
   /* ══════════════════════════════════════════════
      RESPONSIVE — Mobile (≤ 768px)
@@ -445,12 +455,32 @@ LAYOUT_BASE = dict(
 )
 
 # ── Cabecera ──────────────────────────────────────────────────────────────────
-st.markdown("# Dashboard Comercial")
-st.markdown(
-    f"<p style='color:{TEXT_MUTED};font-size:0.82rem;margin-top:-8px;margin-bottom:20px;'>"
-    f"Panadería · Análisis de ventas</p>",
-    unsafe_allow_html=True
-)
+# Botón de toggle del sidebar (reemplaza el botón nativo que rompe en Streamlit Cloud)
+import streamlit.components.v1 as components
+
+col_menu, col_title = st.columns([0.06, 0.94])
+with col_menu:
+    if st.button("[ ]", help="Mostrar / ocultar panel lateral", key="toggle_sidebar"):
+        components.html("""
+        <script>
+            const sidebar = window.parent.document.querySelector('[data-testid="stSidebar"]');
+            const btn = window.parent.document.querySelector('[data-testid="stSidebarCollapseButton"] button')
+                     || window.parent.document.querySelector('[data-testid="collapsedControl"] button');
+            if (btn) { btn.click(); }
+            else if (sidebar) {
+                const current = sidebar.style.display;
+                sidebar.style.display = current === "none" ? "" : "none";
+            }
+        </script>
+        """, height=0)
+
+with col_title:
+    st.markdown("# Dashboard Comercial")
+    st.markdown(
+        f"<p style='color:{TEXT_MUTED};font-size:0.82rem;margin-top:-8px;margin-bottom:4px;'>"
+        f"Panadería · Análisis de ventas</p>",
+        unsafe_allow_html=True
+    )
 st.markdown("---")
 
 # ── KPIs ──────────────────────────────────────────────────────────────────────
@@ -677,7 +707,16 @@ st.caption("El color más oscuro = mayor ingreso. La columna derecha es el acumu
 
 # ── Tabla detalle ─────────────────────────────────────────────────────────────
 st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
-with st.expander("Ver registros", expanded=False):
+
+if "mostrar_tabla" not in st.session_state:
+    st.session_state.mostrar_tabla = False
+
+lbl_tabla = "Ocultar registros" if st.session_state.mostrar_tabla else "Ver registros"
+if st.button(lbl_tabla, use_container_width=False):
+    st.session_state.mostrar_tabla = not st.session_state.mostrar_tabla
+    st.rerun()
+
+if st.session_state.mostrar_tabla:
     dd = df.copy()
     dd["Fecha"]           = dd["Fecha"].dt.strftime("%d/%m/%Y")
     dd["Precio Unitario"] = dd["Precio Unitario"].apply(lambda x: fmt_ars(x))
