@@ -192,7 +192,8 @@ st.markdown(f"""
 
   /* El contenedor del botón: visible y con tamaño fijo */
   [data-testid="stSidebarCollapseButton"],
-  [data-testid="collapsedControl"] {{
+  [data-testid="collapsedControl"],
+  [data-testid="stSidebarCollapsedControl"] {{
     display: flex !important;
     visibility: visible !important;
     position: relative !important;
@@ -203,7 +204,8 @@ st.markdown(f"""
 
   /* El botón interno: caja sin texto visible */
   [data-testid="stSidebarCollapseButton"] button,
-  [data-testid="collapsedControl"] button {{
+  [data-testid="collapsedControl"] button,
+  [data-testid="stSidebarCollapsedControl"] button {{
     width: 2.2rem !important;
     height: 2.2rem !important;
     min-width: 2.2rem !important;
@@ -213,14 +215,15 @@ st.markdown(f"""
     border: 1px solid {BORDER} !important;
     cursor: pointer !important;
     position: relative !important;
-    overflow: hidden !important;  /* oculta el texto del ícono Material */
+    overflow: hidden !important;
     color: transparent !important;
     font-size: 0 !important;
   }}
 
   /* Todos los spans/svgs internos: invisible */
   [data-testid="stSidebarCollapseButton"] button *,
-  [data-testid="collapsedControl"] button * {{
+  [data-testid="collapsedControl"] button *,
+  [data-testid="stSidebarCollapsedControl"] button * {{
     color: transparent !important;
     fill: transparent !important;
     opacity: 0 !important;
@@ -241,7 +244,8 @@ st.markdown(f"""
     font-family: Georgia, serif !important;
     opacity: 1 !important;
   }}
-  [data-testid="collapsedControl"] button::after {{
+  [data-testid="collapsedControl"] button::after,
+  [data-testid="stSidebarCollapsedControl"] button::after {{
     content: "›" !important;
     position: absolute !important;
     top: 50% !important;
@@ -257,7 +261,8 @@ st.markdown(f"""
 
   /* Hover */
   [data-testid="stSidebarCollapseButton"] button:hover,
-  [data-testid="collapsedControl"] button:hover {{
+  [data-testid="collapsedControl"] button:hover,
+  [data-testid="stSidebarCollapsedControl"] button:hover {{
     background: {BORDER} !important;
     border-color: {ACCENT} !important;
   }}
