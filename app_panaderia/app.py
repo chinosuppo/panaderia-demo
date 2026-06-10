@@ -254,11 +254,19 @@ with st.sidebar:
 
     fecha_min = df_raw["Fecha"].min().date()
     fecha_max = df_raw["Fecha"].max().date()
+    st.markdown(
+        "<div style='font-size:0.75rem;font-weight:600;color:#9CA3AF;"
+        "letter-spacing:0.04em;text-transform:uppercase;margin-bottom:4px;'>"
+        "Período</div>",
+        unsafe_allow_html=True,
+    )
     rango_fechas = st.date_input(
         "Período",
         value=(fecha_min, fecha_max),
         min_value=fecha_min,
         max_value=fecha_max,
+        format="DD/MM/YYYY",
+        label_visibility="collapsed",
     )
 
     st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
@@ -269,7 +277,7 @@ with st.sidebar:
 
     st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
 
-    if st.button("↺  Actualizar datos", use_container_width=True,
+    if st.button("Actualizar datos", use_container_width=True,
                  help="Limpia el caché y vuelve a leer el CSV."):
         st.cache_data.clear()
         st.rerun()
@@ -398,12 +406,16 @@ st.plotly_chart(fig_barras, use_container_width=True)
 # GRÁFICO 2 — Barras apiladas por semana
 # ══════════════════════════════════════════════════════════════════════════════
 df_sem = df.groupby(["Semana", "Producto"], as_index=False)["Total_Venta"].sum()
-df_sem["Semana_str"] = df_sem["Semana"].astype(str)
+
+# Mapear cada período semanal a "Sem 1", "Sem 2", etc. (ordenado cronológicamente)
+semanas_unicas = sorted(df_sem["Semana"].unique())
+semana_a_label = {s: f"Sem {i+1}" for i, s in enumerate(semanas_unicas)}
+df_sem["Semana_str"] = df_sem["Semana"].map(semana_a_label)
 df_sem["Ingreso_str"] = df_sem["Total_Venta"].apply(fmt_ars)
 
 semana_top    = df.groupby("Semana")["Total_Venta"].sum().idxmax()
 semana_top_v  = df.groupby("Semana")["Total_Venta"].sum().max()
-semana_top_str= str(semana_top)
+semana_top_str= semana_a_label[semana_top]  # "Sem N" en lugar del rango de fechas
 
 insight_sem = (
     f"📅 La semana con mayor ingreso fue <b>{semana_top_str}</b> "
@@ -560,7 +572,7 @@ st.caption("El color más oscuro = mayor ingreso. La columna derecha es el acumu
 
 # ── Tabla detalle ─────────────────────────────────────────────────────────────
 st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
-with st.expander("Ver registros"):
+with st.expander("📋 Ver registros", expanded=False):
     dd = df.copy()
     dd["Fecha"]           = dd["Fecha"].dt.strftime("%d/%m/%Y")
     dd["Precio Unitario"] = dd["Precio Unitario"].apply(lambda x: fmt_ars(x))
