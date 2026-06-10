@@ -14,7 +14,7 @@ st.set_page_config(
     page_title="Panadería · Dashboard",
     page_icon="🥐",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 # ── Estado del tema ───────────────────────────────────────────────────────────
@@ -43,7 +43,7 @@ if DARK:
     BANNER_TEXT  = "#E8C49A"
     HEATMAP      = ["#161616","#2A1A0A","#C17B3A","#F5A84A"]
     TREEMAP      = ["#1A1A1A","#2A1A0A","#C17B3A","#F5A84A"]
-    BTN_TEMA     = "☀️  Modo claro"
+    BTN_TEMA     = "Modo claro"
 else:
     BG           = "#F8F9FA"
     BG_CARD      = "#FFFFFF"
@@ -63,7 +63,7 @@ else:
     BANNER_TEXT  = "#92400E"
     HEATMAP      = ["#F9FAFB","#FEF3C7","#F59E0B","#92400E"]
     TREEMAP      = ["#F9FAFB","#FEF3C7","#F59E0B","#92400E"]
-    BTN_TEMA     = "🌙  Modo oscuro"
+    BTN_TEMA     = "Modo oscuro"
 
 PALETTE = ["#F59E0B","#EF4444","#10B981","#3B82F6","#8B5CF6","#EC4899"]
 
@@ -78,8 +78,19 @@ st.markdown(f"""
 
   .stApp {{ background-color: {BG}; }}
 
+  /* ── Padding del contenido principal — más compacto en mobile ── */
+  .block-container {{
+    padding-top: 1.5rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    max-width: 100% !important;
+  }}
+
   /* ── Sidebar ── */
-  [data-testid="stSidebar"] {{ background-color: {BG_SIDEBAR}; border-right: 1px solid #1F1F1F; }}
+  [data-testid="stSidebar"] {{
+    background-color: {BG_SIDEBAR};
+    border-right: 1px solid #1F1F1F;
+  }}
   [data-testid="stSidebar"] * {{ color: #E5E7EB !important; }}
   [data-testid="stSidebar"] .stMultiSelect [data-baseweb="tag"] {{
     background-color: #2A2A2A !important;
@@ -111,17 +122,18 @@ st.markdown(f"""
   /* ── Cabecera ── */
   h1 {{
     font-family: 'Inter', sans-serif !important;
-    font-size: 1.6rem !important;
+    font-size: 1.4rem !important;
     font-weight: 700 !important;
     letter-spacing: -0.03em !important;
     color: {TEXT_MAIN} !important;
     margin-bottom: 2px !important;
+    line-height: 1.2 !important;
   }}
   h2, h3 {{
     font-family: 'Inter', sans-serif !important;
     font-weight: 600 !important;
     color: {TEXT_MAIN} !important;
-    font-size: 1rem !important;
+    font-size: 0.95rem !important;
     letter-spacing: -0.01em !important;
     margin-top: 0 !important;
   }}
@@ -131,12 +143,12 @@ st.markdown(f"""
     background: {BG_CARD};
     border: 1px solid {BORDER};
     border-radius: 10px;
-    padding: 18px 22px !important;
+    padding: 14px 16px !important;
     box-shadow: 0 1px 3px {SHADOW};
   }}
   [data-testid="stMetricLabel"] {{
     font-family: 'Inter', sans-serif !important;
-    font-size: 0.72rem !important;
+    font-size: 0.68rem !important;
     font-weight: 600 !important;
     letter-spacing: 0.06em !important;
     text-transform: uppercase !important;
@@ -144,41 +156,31 @@ st.markdown(f"""
   }}
   [data-testid="stMetricValue"] {{
     font-family: 'Inter', sans-serif !important;
-    font-size: 1.75rem !important;
+    font-size: 1.4rem !important;
     font-weight: 700 !important;
     color: {TEXT_MAIN} !important;
     letter-spacing: -0.02em !important;
   }}
   [data-testid="stMetricDelta"] {{
-    font-size: 0.8rem !important;
+    font-size: 0.75rem !important;
     font-weight: 500 !important;
   }}
 
   /* ── Divisor ── */
-  hr {{ border-color: {BORDER}; margin: 4px 0 20px 0; }}
+  hr {{ border-color: {BORDER}; margin: 4px 0 16px 0; }}
 
   /* ── Banner de insight ── */
   .insight-banner {{
     background: {BANNER_BG};
     border: 1px solid {BANNER_BORDER};
     border-radius: 8px;
-    padding: 10px 16px;
-    margin-bottom: 12px;
-    font-size: 0.84rem;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    font-size: 0.82rem;
     font-weight: 500;
     color: {BANNER_TEXT};
     font-family: 'Inter', sans-serif;
-  }}
-
-  /* ── Sección título ── */
-  .section-label {{
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: {TEXT_MUTED};
-    margin-bottom: 6px;
-    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
   }}
 
   /* ── Expander ── */
@@ -191,10 +193,92 @@ st.markdown(f"""
     color: {TEXT_MAIN} !important;
   }}
 
-  .stCaption {{ color: {TEXT_MUTED} !important; font-size: 0.75rem !important; }}
+  .stCaption {{ color: {TEXT_MUTED} !important; font-size: 0.72rem !important; }}
+  .stMarkdown p {{ color: {TEXT_SUB}; font-size: 0.88rem; }}
 
-  /* Texto general */
-  .stMarkdown p {{ color: {TEXT_SUB}; font-size: 0.9rem; }}
+  /* ══════════════════════════════════════════════
+     RESPONSIVE — Mobile (≤ 768px)
+     Streamlit mobile: el sidebar se convierte en
+     overlay, el contenido ocupa 100% del ancho.
+  ══════════════════════════════════════════════ */
+  @media (max-width: 768px) {{
+
+    /* Padding mínimo en mobile */
+    .block-container {{
+      padding-left: 0.6rem !important;
+      padding-right: 0.6rem !important;
+      padding-top: 1rem !important;
+    }}
+
+    /* Título más chico */
+    h1 {{
+      font-size: 1.15rem !important;
+    }}
+    h2, h3 {{
+      font-size: 0.88rem !important;
+    }}
+
+    /* Métricas: valor más compacto */
+    [data-testid="stMetricValue"] {{
+      font-size: 1.15rem !important;
+    }}
+    [data-testid="stMetricLabel"] {{
+      font-size: 0.62rem !important;
+    }}
+    [data-testid="stMetric"] {{
+      padding: 10px 12px !important;
+    }}
+
+    /* Banner de insight: texto más chico */
+    .insight-banner {{
+      font-size: 0.78rem !important;
+      padding: 8px 12px !important;
+    }}
+
+    /* Plotly charts: asegurar ancho completo y sin overflow */
+    .stPlotlyChart {{
+      width: 100% !important;
+      overflow-x: hidden !important;
+    }}
+    .stPlotlyChart > div {{
+      width: 100% !important;
+    }}
+
+    /* Dataframe: scroll horizontal habilitado */
+    [data-testid="stDataFrame"] {{
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch;
+    }}
+
+    /* Columnas de Streamlit en mobile: 
+       forzar wrap para que las 3 métricas
+       se apilen de a una o de a dos */
+    [data-testid="stHorizontalBlock"] {{
+      flex-wrap: wrap !important;
+      gap: 8px !important;
+    }}
+    [data-testid="stHorizontalBlock"] > div {{
+      min-width: 140px !important;
+      flex: 1 1 140px !important;
+    }}
+
+    /* Caption más pequeño */
+    .stCaption {{
+      font-size: 0.68rem !important;
+    }}
+  }}
+
+  /* Tablet (769px – 1024px): ajuste intermedio */
+  @media (min-width: 769px) and (max-width: 1024px) {{
+    .block-container {{
+      padding-left: 1.2rem !important;
+      padding-right: 1.2rem !important;
+    }}
+    [data-testid="stMetricValue"] {{
+      font-size: 1.5rem !important;
+    }}
+  }}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -397,10 +481,10 @@ fig_barras.update_layout(
     yaxis=dict(title="", tickformat="$,.0f", tickfont=dict(size=11, color=TEXT_MUTED),
                gridcolor=GRID, gridwidth=1, zeroline=False, showticklabels=False),
     margin=dict(t=40, b=40, l=0, r=0),
-    height=380,
+    height=340,
     uniformtext=dict(minsize=10, mode="show"),
 )
-st.plotly_chart(fig_barras, use_container_width=True)
+st.plotly_chart(fig_barras, use_container_width=True, config={"responsive": True})
 
 # ══════════════════════════════════════════════════════════════════════════════
 # GRÁFICO 2 — Barras apiladas por semana
@@ -443,18 +527,19 @@ fig_sem.update_layout(
     legend=dict(
         title=None,
         bgcolor=LEGEND_BG, bordercolor=BORDER, borderwidth=1,
-        font=dict(size=11, color=TEXT_SUB),
-        orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0,
+        font=dict(size=10, color=TEXT_SUB),
+        orientation="h", yanchor="bottom", y=1.01, xanchor="left", x=0,
+        itemwidth=40,
     ),
     xaxis=dict(title="", tickfont=dict(size=10, color=TEXT_MUTED),
                gridcolor="rgba(0,0,0,0)", tickangle=-35),
     yaxis=dict(title="", tickformat="$,.0f", tickfont=dict(size=11, color=TEXT_MUTED),
                gridcolor=GRID, gridwidth=1, zeroline=False),
-    margin=dict(t=40, b=60, l=0, r=0),
-    height=400,
+    margin=dict(t=40, b=50, l=0, r=0),
+    height=340,
     hovermode="closest",
 )
-st.plotly_chart(fig_sem, use_container_width=True)
+st.plotly_chart(fig_sem, use_container_width=True, config={"responsive": True})
 
 # ══════════════════════════════════════════════════════════════════════════════
 # GRÁFICO 3 — Treemap: Participación
@@ -486,9 +571,9 @@ fig_treemap.update_traces(
 )
 fig_treemap.update_layout(
     **LAYOUT_BASE, coloraxis_showscale=False,
-    margin=dict(t=8, b=8, l=8, r=8), height=360,
+    margin=dict(t=8, b=8, l=8, r=8), height=300,
 )
-st.plotly_chart(fig_treemap, use_container_width=True)
+st.plotly_chart(fig_treemap, use_container_width=True, config={"responsive": True})
 
 # ══════════════════════════════════════════════════════════════════════════════
 # GRÁFICO 4 — Heatmap Mensual
@@ -565,14 +650,14 @@ fig_heat.update_layout(
     xaxis=dict(title="", side="top", tickfont=dict(size=12, color=TEXT_SUB), gridcolor="rgba(0,0,0,0)"),
     yaxis=dict(title="", tickfont=dict(size=12, color=TEXT_SUB), autorange="reversed", gridcolor="rgba(0,0,0,0)"),
     margin=dict(t=36, b=16, l=8, r=90),
-    height=300,
+    height=280,
 )
-st.plotly_chart(fig_heat, use_container_width=True)
+st.plotly_chart(fig_heat, use_container_width=True, config={"responsive": True})
 st.caption("El color más oscuro = mayor ingreso. La columna derecha es el acumulado del período.")
 
 # ── Tabla detalle ─────────────────────────────────────────────────────────────
 st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
-with st.expander("📋 Ver registros", expanded=False):
+with st.expander("Ver registros", expanded=False):
     dd = df.copy()
     dd["Fecha"]           = dd["Fecha"].dt.strftime("%d/%m/%Y")
     dd["Precio Unitario"] = dd["Precio Unitario"].apply(lambda x: fmt_ars(x))
