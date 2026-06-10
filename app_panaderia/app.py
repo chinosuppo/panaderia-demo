@@ -108,16 +108,28 @@ def cargar_datos(url: str) -> pd.DataFrame:
     # Conversión de fecha
     df["Fecha"] = pd.to_datetime(df["Fecha"], dayfirst=True, errors="coerce")
 
-    # Limpiar columnas numéricas por si vienen con formato raro
-    df["Precio Unitario"] = (
-        df["Precio Unitario"].astype(str).str.replace(r"[^\d.]", "", regex=True)
-    )
-    df["Cantidad Vendida"] = (
-        df["Cantidad Vendida"].astype(str).str.replace(r"[^\d.]", "", regex=True)
-    )
+    # Limpiar columnas numéricas
+    # El CSV de Google Sheets (configuración argentina) puede venir con punto
+    # como separador de miles (ej: "1.500", "4.000"). Hay que quitarlo ANTES
+    # de parsear. Estrategia:
+    #   - Quitar $ y espacios
+    #   - Si tiene punto pero NO coma → es separador de miles → borrarlo
+    #   - Si tiene coma → es decimal → reemplazar por punto
+    def limpiar_numero(serie: pd.Series) -> pd.Series:
+        s = serie.astype(str).str.strip().str.replace(r"[\$\s]", "", regex=True)
+        tiene_punto = s.str.contains(r"\.", regex=True)
+        tiene_coma  = s.str.contains(r",", regex=True)
+        # Solo punto → separador de miles → borrarlo
+        s = s.where(~(tiene_punto & ~tiene_coma),
+                    s.str.replace(".", "", regex=False))
+        # Coma como decimal → convertir a punto
+        s = s.str.replace(",", ".", regex=False)
+        # Eliminar cualquier carácter no numérico restante (excepto punto decimal)
+        s = s.str.replace(r"[^\d.]", "", regex=True)
+        return pd.to_numeric(s, errors="coerce")
 
-    df["Precio Unitario"] = pd.to_numeric(df["Precio Unitario"], errors="coerce")
-    df["Cantidad Vendida"] = pd.to_numeric(df["Cantidad Vendida"], errors="coerce")
+    df["Precio Unitario"] = limpiar_numero(df["Precio Unitario"])
+    df["Cantidad Vendida"] = limpiar_numero(df["Cantidad Vendida"])
 
     # Columna derivada
     df["Total_Venta"] = df["Precio Unitario"] * df["Cantidad Vendida"]
@@ -125,6 +137,10 @@ def cargar_datos(url: str) -> pd.DataFrame:
     # Eliminar filas con datos críticos faltantes
     df.dropna(subset=["Fecha", "Producto", "Total_Venta"], inplace=True)
     df.sort_values("Fecha", inplace=True)
+
+    # Guardar timestamp de carga como metadato del DataFrame
+    from datetime import datetime
+    df.attrs["cargado_en"] = datetime.now().strftime("%d/%m/%Y %H:%M")
 
     return df
 
@@ -164,8 +180,21 @@ with st.sidebar:
     )
 
     st.markdown("---")
+
+    # ── Botón de recarga ──────────────────────────────────────────────────────
+    if st.button(
+        "🔄  Actualizar datos",
+        use_container_width=True,
+        help="Limpia el caché y vuelve a leer el CSV desde Google Sheets.",
+    ):
+        st.cache_data.clear()
+        st.rerun()
+
+    st.markdown("---")
+    ultima_carga = df_raw.attrs.get("cargado_en", "—")
     st.caption(f"📅 Datos: {fecha_min} → {fecha_max}")
     st.caption(f"📦 {len(df_raw):,} registros cargados")
+    st.caption(f"🕐 Última carga: {ultima_carga}")
 
 
 # ── Filtrado ──────────────────────────────────────────────────────────────────
