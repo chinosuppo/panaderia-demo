@@ -196,78 +196,24 @@ st.markdown(f"""
   .stCaption {{ color: {TEXT_MUTED} !important; font-size: 0.72rem !important; }}
   .stMarkdown p {{ color: {TEXT_SUB}; font-size: 0.88rem; }}
 
-  /* ── Fix: botón nativo del sidebar muestra nombre de ícono como texto ──────
-     Streamlit Cloud renderiza "keyboard_double_arrow_right" en lugar del SVG.
-     Ocultamos el texto interno y lo reemplazamos con un carácter CSS puro.   */
-  [data-testid="stSidebarCollapseButton"] button {{
-    font-size: 0 !important;        /* oculta el texto literal del ícono */
-    width: 2rem !important;
-    height: 2rem !important;
-    border-radius: 6px !important;
-    background: #1F1F1F !important;
-    border: 1px solid #333 !important;
-    cursor: pointer !important;
-    position: relative !important;
-  }}
-  [data-testid="stSidebarCollapseButton"] button::after {{
-    content: "\2039" !important;    /* ‹ — flecha izquierda limpia */
-    font-size: 1.4rem !important;
-    color: #9CA3AF !important;
+  /* ── Ocultar completamente el botón nativo del sidebar ─────────────────────
+     Causa: Streamlit Cloud no carga Material Icons y renderiza el nombre
+     del ícono como texto plano ("keyboard_double_arrow_right").
+     Solución: display none sobre el contenedor completo.                    */
+  [data-testid="stSidebarCollapseButton"],
+  [data-testid="collapsedControl"] {{
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
     position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    line-height: 1 !important;
-    font-family: 'Inter', sans-serif !important;
-  }}
-  /* Cuando está colapsado: flecha hacia la derecha */
-  [data-testid="collapsedControl"] button {{
-    font-size: 0 !important;
-    width: 2rem !important;
-    height: 2rem !important;
-    border-radius: 6px !important;
-    background: #1F1F1F !important;
-    border: 1px solid #333 !important;
-    cursor: pointer !important;
-    position: relative !important;
-  }}
-  [data-testid="collapsedControl"] button::after {{
-    content: "\203A" !important;   /* › — flecha derecha limpia */
-    font-size: 1.4rem !important;
-    color: #9CA3AF !important;
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    line-height: 1 !important;
-    font-family: 'Inter', sans-serif !important;
+    pointer-events: none !important;
   }}
 
-  /* ── Fix: expander muestra "_arrow_drop_down" como texto ──────────────────
-     Misma técnica: tamaño 0 al texto nativo, reemplazar con CSS puro.       */
-  [data-testid="stExpander"] summary svg {{
+  /* ── Ocultar íconos del expander que se muestran como texto ─────────────── */
+  [data-testid="stExpander"] summary span[data-testid="stExpanderToggleIcon"] {{
     display: none !important;
-  }}
-  details > summary {{
-    list-style: none !important;
-  }}
-  details > summary::marker,
-  details > summary::-webkit-details-marker {{
-    display: none !important;
-  }}
-  [data-testid="stExpander"] summary::before {{
-    content: "+" !important;
-    font-size: 1rem !important;
-    font-weight: 600 !important;
-    color: {TEXT_MUTED} !important;
-    margin-right: 8px !important;
-    font-family: 'Inter', sans-serif !important;
-    display: inline-block !important;
-    width: 16px !important;
-    text-align: center !important;
-  }}
-  details[open] > summary::before {{
-    content: "\2212" !important;   /* − signo menos cuando está abierto */
   }}
 
   /* ══════════════════════════════════════════════
