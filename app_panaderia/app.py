@@ -276,11 +276,11 @@ promedio_ticket= df["Total_Venta"].mean()
 
 col1, col2, col3 = st.columns(3)
 with col1:
-    st.metric("💰 Venta Total",          f"${venta_total:,.0f}")
+    st.metric("💰 Total Ingreso",         fmt_ars(venta_total))
 with col2:
     st.metric("📦 Cantidad Total Vendida", f"{cantidad_total:,.0f} uds.")
 with col3:
-    st.metric("🧾 Promedio por Ticket",   f"${promedio_ticket:,.0f}")
+    st.metric("🧾 Promedio por Ticket",   fmt_ars(promedio_ticket))
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -292,8 +292,12 @@ LAYOUT_BASE = dict(
     font_color    = TEXT_MAIN,
 )
 
+def fmt_ars(valor: float) -> str:
+    """Formatea un número con separador de miles punto, estilo argentino. Ej: $17.316.000"""
+    return "$" + f"{int(valor):,}".replace(",", ".")
+
 # ── Gráfico 1: Barras ─────────────────────────────────────────────────────────
-st.markdown("### Venta Total por Producto")
+st.markdown("### Total Ingreso por Producto")
 
 ventas_producto = (
     df.groupby("Producto", as_index=False)["Total_Venta"]
@@ -305,18 +309,32 @@ fig_barras = px.bar(
     text="Total_Venta", color="Producto",
     color_discrete_sequence=PALETTE,
 )
+# Pre-calcular etiquetas con formato argentino
+ventas_producto["label_ars"] = ventas_producto["Total_Venta"].apply(fmt_ars)
+
 fig_barras.update_traces(
-    texttemplate="$%{text:,.0f}",
+    text=ventas_producto["label_ars"],
+    texttemplate="%{text}",
     textposition="outside",
     textfont=dict(size=13, color=TEXT_MAIN, family="DM Sans"),
     marker_line_width=0,
     width=0.55,
+    hovertemplate=(
+        "<b>Producto:</b> %{x}<br>"
+        "<b>Total Ingreso:</b> " +
+        ventas_producto["label_ars"].iloc[0].replace(
+            ventas_producto["label_ars"].iloc[0],
+            "%{customdata}"
+        ) +
+        "<extra></extra>"
+    ),
+    customdata=ventas_producto["label_ars"],
 )
 fig_barras.update_layout(
     **LAYOUT_BASE,
     showlegend=False,
     xaxis=dict(title="", tickfont=dict(size=13, color=TEXT_MAIN), gridcolor="rgba(0,0,0,0)", tickangle=0),
-    yaxis=dict(title="Venta Total ($)", tickformat="$,.0f", tickfont=dict(size=12, color=TEXT_MAIN),
+    yaxis=dict(title="Total Ingreso ($)", tickformat="$,.0f", tickfont=dict(size=12, color=TEXT_MAIN),
                gridcolor=GRID, gridwidth=1, zeroline=False),
     margin=dict(t=50, b=60, l=10, r=10),
     height=440,
@@ -325,9 +343,11 @@ fig_barras.update_layout(
 st.plotly_chart(fig_barras, use_container_width=True)
 
 # ── Gráfico 2: Líneas ─────────────────────────────────────────────────────────
-st.markdown("### Evolución de Ventas en el Tiempo")
+st.markdown("### Evolución de Total Ingreso en el Tiempo")
 
 ventas_tiempo = df.groupby(["Fecha", "Producto"], as_index=False)["Total_Venta"].sum()
+ventas_tiempo["Fecha_str"]    = ventas_tiempo["Fecha"].dt.strftime("%d/%m/%Y")
+ventas_tiempo["Ingreso_str"]  = ventas_tiempo["Total_Venta"].apply(fmt_ars)
 
 fig_lineas = px.line(
     ventas_tiempo, x="Fecha", y="Total_Venta",
@@ -337,6 +357,13 @@ fig_lineas = px.line(
 fig_lineas.update_traces(
     marker=dict(size=5, line=dict(width=1.5, color=BG_PLOT)),
     line=dict(width=2.5),
+    hovertemplate=(
+        "<b>%{customdata[0]}</b><br>"
+        "Fecha: %{customdata[1]}<br>"
+        "Total Ingreso: %{customdata[2]}"
+        "<extra></extra>"
+    ),
+    customdata=ventas_tiempo[["Producto", "Fecha_str", "Ingreso_str"]].values,
 )
 fig_lineas.update_layout(
     **LAYOUT_BASE,
@@ -348,13 +375,13 @@ fig_lineas.update_layout(
         font=dict(size=12, color=TEXT_MAIN, family="DM Sans"),
         x=1.01, xanchor="left", y=1, yanchor="top",
     ),
-    xaxis=dict(title="", tickformat="%d %b", tickfont=dict(size=12, color=TEXT_MAIN),
+    xaxis=dict(title="", tickformat="%d/%m/%Y", tickfont=dict(size=12, color=TEXT_MAIN),
                gridcolor=GRID, gridwidth=1),
-    yaxis=dict(title="Venta Total ($)", tickformat="$,.0f", tickfont=dict(size=12, color=TEXT_MAIN),
+    yaxis=dict(title="Total Ingreso ($)", tickformat="$,.0f", tickfont=dict(size=12, color=TEXT_MAIN),
                gridcolor=GRID, gridwidth=1, zeroline=False),
     margin=dict(t=20, b=10, l=10, r=160),
     height=420,
-    hovermode="x unified",
+    hovermode="closest",
 )
 st.plotly_chart(fig_lineas, use_container_width=True)
 
@@ -376,7 +403,7 @@ fig_treemap.update_traces(
     texttemplate="<b>%{label}</b><br>$%{value:,.0f}<br>%{customdata[0]:.1f}%",
     textfont=dict(family="DM Sans", size=14),
     marker=dict(line=dict(width=2, color=BG_PLOT)),
-    hovertemplate="<b>%{label}</b><br>Venta Total: $%{value:,.0f}<br>Participación: %{customdata[0]:.1f}%<extra></extra>",
+    hovertemplate="<b>%{label}</b><br>Total Ingreso: $%{value:,.0f}<br>Participación: %{customdata[0]:.1f}%<extra></extra>",
 )
 fig_treemap.update_layout(
     **LAYOUT_BASE,
