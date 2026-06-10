@@ -333,11 +333,13 @@ promedio_ticket = df["Total_Venta"].mean()
 
 # Variación mes a mes (últimos dos meses con datos)
 meses_ord = por_mes.sort_index()
-if len(meses_ord) >= 2:
+n_meses = len(meses_ord)
+if n_meses >= 2:
     delta_pct = (meses_ord.iloc[-1] - meses_ord.iloc[-2]) / meses_ord.iloc[-2] * 100
-    delta_label = f"{delta_pct:+.1f}% vs mes anterior"
+    mes_ref   = MESES_ES[meses_ord.index[-2].month]
+    delta_label = f"{delta_pct:+.1f}% vs {mes_ref}"
 else:
-    delta_label = None
+    delta_label = None   # un solo mes → no hay comparación posible
 
 LAYOUT_BASE = dict(
     plot_bgcolor  = BG_PLOT,
@@ -423,13 +425,21 @@ semana_top    = df.groupby("Semana")["Total_Venta"].sum().idxmax()
 semana_top_v  = df.groupby("Semana")["Total_Venta"].sum().max()
 semana_top_str= semana_a_label[semana_top]  # "Sem N" en lugar del rango de fechas
 
-insight_sem = (
+# Construir insight semanal según cuántos meses hay en el filtro
+_sem_base = (
     f"📅 La semana con mayor ingreso fue <b>{semana_top_str}</b> "
-    f"con {fmt_ars(semana_top_v)}. "
-    f"El mes más fuerte fue <b>{mejor_mes_str}</b> "
-    f"({fmt_ars(por_mes[mejor_mes])}) y el más débil <b>{peor_mes_str}</b> "
-    f"({fmt_ars(por_mes[peor_mes])})."
+    f"con {fmt_ars(semana_top_v)}."
 )
+if n_meses >= 2 and mejor_mes != peor_mes:
+    _sem_base += (
+        f" El mes más fuerte fue <b>{mejor_mes_str}</b> "
+        f"({fmt_ars(por_mes[mejor_mes])}) y el más débil <b>{peor_mes_str}</b> "
+        f"({fmt_ars(por_mes[peor_mes])})."
+    )
+elif n_meses == 1:
+    _sem_base += f" Período: <b>{mejor_mes_str}</b> · {fmt_ars(por_mes[mejor_mes])} en total."
+
+insight_sem = _sem_base
 st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
 st.markdown(f"<div class='insight-banner'>{insight_sem}</div>", unsafe_allow_html=True)
 st.markdown("### Ingreso Semanal por Producto")
@@ -523,13 +533,16 @@ if len(mes_cols) >= 2:
     crec = pivot[mes_cols[-1]] - pivot[mes_cols[-2]]
     prod_crec  = crec.idxmax()
     prod_caida = crec.idxmin()
-    insight_heat = (
-        f"📈 En el último mes <b>{prod_crec}</b> fue el producto con mayor crecimiento "
-        f"({fmt_ars(crec[prod_crec])}). "
-        f"<b>{prod_caida}</b> tuvo la mayor caída ({fmt_ars(crec[prod_caida])})."
-    )
+    if prod_crec != prod_caida:
+        insight_heat = (
+            f"📈 En el último mes <b>{prod_crec}</b> fue el producto con mayor crecimiento "
+            f"({fmt_ars(crec[prod_crec])}). "
+            f"<b>{prod_caida}</b> tuvo la mayor caída ({fmt_ars(crec[prod_caida])})."
+        )
+    else:
+        insight_heat = f"📊 Todos los productos tuvieron el mismo comportamiento en el último mes."
 else:
-    insight_heat = "📊 Seleccioná un rango más amplio para ver variaciones mensuales."
+    insight_heat = f"📊 Mostrando datos de <b>{mejor_mes_str}</b>. Ampliá el rango de fechas para ver variaciones mensuales."
 
 st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
 st.markdown(f"<div class='insight-banner'>{insight_heat}</div>", unsafe_allow_html=True)
