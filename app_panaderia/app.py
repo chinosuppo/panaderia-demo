@@ -305,31 +305,29 @@ ventas_producto = (
     .sum().sort_values("Total_Venta", ascending=False)
 )
 
-fig_barras = px.bar(
-    ventas_producto, x="Producto", y="Total_Venta",
-    text="Total_Venta", color="Producto",
-    color_discrete_sequence=PALETTE,
-)
-# Pre-calcular etiquetas con formato argentino
+# Etiqueta encima de cada barra con formato argentino (punto como miles)
 ventas_producto["label_ars"] = ventas_producto["Total_Venta"].apply(fmt_ars)
 
+fig_barras = px.bar(
+    ventas_producto, x="Producto", y="Total_Venta",
+    text="label_ars",          # etiqueta ya formateada
+    color="Producto",
+    color_discrete_sequence=PALETTE,
+    custom_data=["label_ars"], # disponible como %{customdata[0]} por fila
+)
+
 fig_barras.update_traces(
-    text=ventas_producto["label_ars"],
     texttemplate="%{text}",
     textposition="outside",
     textfont=dict(size=13, color=TEXT_MAIN, family="DM Sans"),
     marker_line_width=0,
     width=0.55,
+    # %{x} = nombre del producto (correcto por trace), %{customdata[0]} = label_ars
     hovertemplate=(
         "<b>Producto:</b> %{x}<br>"
-        "<b>Total Ingreso:</b> " +
-        ventas_producto["label_ars"].iloc[0].replace(
-            ventas_producto["label_ars"].iloc[0],
-            "%{customdata}"
-        ) +
+        "<b>Total Ingreso:</b> %{customdata[0]}"
         "<extra></extra>"
     ),
-    customdata=ventas_producto["label_ars"],
 )
 fig_barras.update_layout(
     **LAYOUT_BASE,
@@ -347,13 +345,15 @@ st.plotly_chart(fig_barras, use_container_width=True)
 st.markdown("### Evolución de Total Ingreso en el Tiempo")
 
 ventas_tiempo = df.groupby(["Fecha", "Producto"], as_index=False)["Total_Venta"].sum()
-ventas_tiempo["Fecha_str"]    = ventas_tiempo["Fecha"].dt.strftime("%d/%m/%Y")
-ventas_tiempo["Ingreso_str"]  = ventas_tiempo["Total_Venta"].apply(fmt_ars)
+ventas_tiempo["Fecha_str"]   = ventas_tiempo["Fecha"].dt.strftime("%d/%m/%Y")
+ventas_tiempo["Ingreso_str"] = ventas_tiempo["Total_Venta"].apply(fmt_ars)
 
+# custom_data como lista de columnas → px.line hace el slice por trace automáticamente
 fig_lineas = px.line(
     ventas_tiempo, x="Fecha", y="Total_Venta",
     color="Producto", color_discrete_sequence=PALETTE,
     line_shape="spline", markers=True,
+    custom_data=["Producto", "Fecha_str", "Ingreso_str"],
 )
 fig_lineas.update_traces(
     marker=dict(size=5, line=dict(width=1.5, color=BG_PLOT)),
@@ -364,7 +364,6 @@ fig_lineas.update_traces(
         "Total Ingreso: %{customdata[2]}"
         "<extra></extra>"
     ),
-    customdata=ventas_tiempo[["Producto", "Fecha_str", "Ingreso_str"]].values,
 )
 fig_lineas.update_layout(
     **LAYOUT_BASE,
