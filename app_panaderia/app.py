@@ -14,7 +14,7 @@ st.set_page_config(
     page_title="Panadería · Dashboard",
     page_icon="🥐",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 # ── Estado del tema ───────────────────────────────────────────────────────────
@@ -195,6 +195,16 @@ st.markdown(f"""
 
   .stCaption {{ color: {TEXT_MUTED} !important; font-size: 0.72rem !important; }}
   .stMarkdown p {{ color: {TEXT_SUB}; font-size: 0.88rem; }}
+
+  /* ── Ocultar botón nativo de colapsar sidebar (causa "keyboard_double_arrow") ── */
+  [data-testid="stSidebarCollapseButton"] {{
+    display: none !important;
+  }}
+  /* En versiones donde el selector es diferente */
+  button[kind="headerNoPadding"],
+  [data-testid="collapsedControl"] {{
+    display: none !important;
+  }}
 
   /* ══════════════════════════════════════════════
      RESPONSIVE — Mobile (≤ 768px)
